@@ -1,5 +1,5 @@
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect} from "react";
 import Square from "../Square/Square";
 import "./Grid.css"
 import { useRulesContext } from "@/context/RulesContext";
