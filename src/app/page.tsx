@@ -1,5 +1,7 @@
 'use client'
 
+import CanvasGrid from '@/components/CanvasGrid/CanvasGrid';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Grid from '@/components/Grid/Grid';
 import Menu from '@/components/Menu/Menu';
 import { GridProvider } from '@/context/GridContext';
@@ -14,7 +16,8 @@ function App() {
  <RulesProvider >
   <GridProvider>
     <Menu /> 
-    <Grid />
+    <CanvasGrid />
+    {/* <Grid /> */}
     </GridProvider>
  </RulesProvider>
   );

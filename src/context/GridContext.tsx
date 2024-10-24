@@ -4,6 +4,10 @@ type GridContextProps = {
 
    grid : number[][]
    setGrid : React.Dispatch<React.SetStateAction<number[][]>>
+   offsetX : number;
+   setOffsetX : React.Dispatch<React.SetStateAction<number>>
+   offsetY : number;
+   setOffsetY : React.Dispatch<React.SetStateAction<number>>
 }
 
 
@@ -14,11 +18,13 @@ export const GridProvider = ({ children }: Readonly<{
 }>) => {
 
   const [grid, setGrid ] = useState<number[][]>([])
+  const [offsetX, setOffsetX] = useState(0);
+  const [offsetY, setOffsetY] = useState(0);
   
 
   return (
 
-    <GridContext.Provider value={{  grid, setGrid  }} >
+    <GridContext.Provider value={{  grid, setGrid, offsetX, setOffsetX, offsetY, setOffsetY  }} >
       {children}
     </GridContext.Provider>
 

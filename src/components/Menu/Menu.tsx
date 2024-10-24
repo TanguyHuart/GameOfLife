@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import { useRulesContext } from '@/context/RulesContext';
 import './Menu.css'
-import createGrid from '@/functions/CreateGride';
+import {createCanvasGrid} from '@/functions/CreateGride';
 import { useGridContext } from '@/context/GridContext';
 
 
@@ -21,11 +21,11 @@ const {
   
 } = useRulesContext()
 
-const {setGrid} = useGridContext()
+const {setGrid , setOffsetX, setOffsetY} = useGridContext()
 
-const width = 20
-const rows = Math.floor(window.innerHeight / width)
-const cols = Math.floor(window.innerWidth / width)
+
+const rows = 200
+const cols = 200
 
   return (
     <nav className='menu'>
@@ -43,12 +43,12 @@ const cols = Math.floor(window.innerWidth / width)
           <input className='items_input' type="number" placeholder='2' id="lifeisKeptWithMin" value={lifeIsKeptWithMin} onChange={(event) => setLifeIsKeptWithMin(parseInt(event.target.value))} />
         </div>
         <div className='options_items'>
-          <label htmlFor="lifeIsKeptWithMax">Nombre de cellules vivantes adjacentes minimum nécéssaires pour qu'une cellule reste vivante</label>
+          <label htmlFor="lifeIsKeptWithMax">Nombre de cellules vivantes adjacentes maximum nécéssaires pour qu'une cellule reste vivante</label>
           <input className='items_input' type="number" placeholder='3' id="lifeisKeptWithMax" value={lifeIsKeptWithMax} onChange={(event) => setLifeIsKeptWithMax(parseInt(event.target.value))} />
         </div>
         <div className='options_items'>
           <label htmlFor="interval">Intervalle entre chaque génération en ms</label>
-          <input className='items_input' type="number" placeholder='1000' id="interval" value={interval} onChange={(event) => setInterval(parseInt(event.target.value))} />
+          <input className='items_input' type="range" min={0} max={1000} placeholder='1000' id="interval" value={interval} onChange={(event) => setInterval(parseInt(event.target.value))} />
         </div>
       </div>
 
@@ -57,7 +57,12 @@ const cols = Math.floor(window.innerWidth / width)
           {isRunning && "STOP"}
           {!isRunning && "RUN"}
         </button>
-        <button type="button" className='reset_button' onClick={()=> {setGrid(createGrid(rows, cols)); setIsRunning(false)}}>
+        <button type="button" className='reset_button' onClick={()=> {
+          setOffsetX(0);
+          setOffsetY(0);
+          setGrid(createCanvasGrid(rows, cols)); 
+          setIsRunning(false)
+          }}>
           RESET
         </button>
       </div>

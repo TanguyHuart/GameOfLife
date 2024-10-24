@@ -1,4 +1,4 @@
- const createGrid = (rows : number , cols : number) => {
+ export const createGrid = (rows : number , cols : number) => {
   const initialGrid = [];
   for (let i = 0; i < rows; i++) {
     const row = []
@@ -11,4 +11,11 @@
   return initialGrid;
 }
 
-export default createGrid
+export function createCanvasGrid(rows: number, cols: number): number[][] {
+  const grid = [];
+  for (let i = 0; i < rows; i++) {
+    const row = new Array(cols).fill(0);
+    grid.push(row);
+  }
+  return grid;
+}
