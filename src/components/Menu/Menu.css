@@ -1,0 +1,73 @@
+.menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 20%;
+  height: 100vh;
+  z-index: 10;
+  background-color: rgb(36, 36, 36);
+  padding: 1rem;
+}
+
+.menu_title {
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.menu_board {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+}
+
+.menu_options {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 1rem;
+}
+
+.options_items {
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.items_input {
+  padding: 0.5rem;
+  width: 5rem;
+}
+
+.board_buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+.run_button {
+  padding: 1rem;
+  background-color: green;
+  color: white;
+  border: 1px solid darkgreen;
+  border-radius: 10px;
+  transition: all 200ms ease-in-out;
+}
+
+.run_button:hover {
+  background-color: darkgreen;
+}
+
+.reset_button {
+  padding: 1rem;
+  background-color: red;
+  color: white;
+  border: 1px solid darkred;
+  border-radius: 10px;
+  transition: all 200ms ease-in-out;
+}
+
+.reset_button:hover {
+  background-color: darkred;
+}
