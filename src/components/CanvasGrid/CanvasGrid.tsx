@@ -8,22 +8,20 @@ import { createCanvasGrid } from "@/functions/CreateGride";
 import calculateVisibleCells from "@/functions/CalculateVisibleCells";
 
 function CanvasGrid() {
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { lifeIsKeptWithMax, lifeIsKeptWithMin, lifeIsCreatedWith, interval, isRunning } = useRulesContext();
-  const [cellSize, setCellSize] = useState(20);
   const rows = 200; // Nombre initial de lignes
   const cols = 200; // Nombre initial de colonnes
   const bufferZone = 50; // Distance avant d'étendre la grille
 
-
+  const { lifeIsKeptWithMax, lifeIsKeptWithMin, lifeIsCreatedWith, interval, isRunning } = useRulesContext();
   // État pour la grille et les décalages
   const {grid, setGrid, offsetX, setOffsetX, offsetY, setOffsetY, showGrid} = useGridContext()
 
+  const [cellSize, setCellSize] = useState(20);
   const [isDragging, setIsDragging] = useState(false);
   const [startDrag, setStartDrag] = useState({ x: 0, y: 0 });
   const [canvasDimensions, setCanvasDimensions] = useState({width : 800, height : 600})
-
-  
 
 
   // Fonction pour gérer l'inversion de l'état d'une cellule
@@ -106,8 +104,6 @@ function CanvasGrid() {
     // Ajuster l'offset pour garder la grille en place
     setOffsetY(prevOffsetY => prevOffsetY - extendAmount * cellSize);
   }
- 
-
     setGrid(newGrid);
   };
 

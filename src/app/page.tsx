@@ -17,7 +17,6 @@ function App() {
   <GridProvider>
     <Menu /> 
     <CanvasGrid />
-    {/* <Grid /> */}
     </GridProvider>
  </RulesProvider>
   );

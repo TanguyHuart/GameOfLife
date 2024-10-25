@@ -15,7 +15,6 @@ const rows = 200
 const cols = 200
 const {lifeIsKeptWithMax, lifeIsKeptWithMin, lifeIsCreatedWith, interval, isRunning} = useRulesContext()
 const { grid, setGrid} = useGridContext()
-const bufferZone = 50;
 const [offsetX, setOffsetX] = useState(0);
 const [offsetY, setOffsetY] = useState(0);
 const [isDragging, setIsDragging] = useState(false);
