@@ -110,24 +110,23 @@ function CanvasGrid() {
   const handleWheel = (e: WheelEvent) => {
     e.preventDefault(); // Empêcher le défilement par défaut
 
-    const zoomFactor = 1.1;
-    if (e.deltaY < 0) {
-      // Zoom avant
-      setCellSize(prevCellSize => Math.min(prevCellSize * zoomFactor, 100)); // Limite max de zoom
-    } else {
-      // Zoom arrière
-      setCellSize(prevCellSize => Math.max(prevCellSize / zoomFactor, 5)); // Limite min de zoom
-    }
-
+    const zoomFactor = 1.05;
+    const scale = e.deltaY < 0 ? zoomFactor : 1 / zoomFactor;
+   
+    const newCellSize = Math.max(1, Math.min(100, cellSize * scale));
     // Ajuster les offsets pour garder la position du curseur cohérente
     const canvas = canvasRef.current;
     if (!canvas) return;
+
+
     const rect = canvas.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
 
-    setOffsetX((prevOffsetX) => prevOffsetX - (mouseX - prevOffsetX) * (zoomFactor - 1));
-    setOffsetY((prevOffsetY) => prevOffsetY - (mouseY - prevOffsetY) * (zoomFactor - 1));
+    setOffsetX((prevOffsetX) => (mouseX - (mouseX - prevOffsetX) * (newCellSize / cellSize)));
+    setOffsetY((prevOffsetY) => (mouseY - (mouseY - prevOffsetY) * (newCellSize / cellSize)));
+  
+    setCellSize(newCellSize);
   };
 
   // Gestion du clic pour inverser l'état des cellules
@@ -135,6 +134,9 @@ function CanvasGrid() {
     e.preventDefault()
     const canvas = canvasRef.current;
     if (!canvas) return;
+
+    
+
     const rect = canvas.getBoundingClientRect();
 
     const x = Math.floor((e.clientX - rect.left - offsetX) / cellSize);
@@ -245,7 +247,7 @@ const {startRow, endRow, startCol, endCol} = calculateVisibleCells(canvasRef, of
         
         ctx.fillStyle = grid[i][j] === 1 ? "white" : "black";
         ctx.fillRect(x, y, cellSize, cellSize);
-        if(showGrid) {
+        if(showGrid && cellSize > 15) {
           ctx.strokeStyle =  'gray'; 
           ctx.strokeRect(x, y, cellSize, cellSize); // Contour de la cellule
         }
