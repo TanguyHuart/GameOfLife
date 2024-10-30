@@ -150,20 +150,22 @@ function CanvasGrid() {
 
 
   // Gestion du drag pour déplacer la grille
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
 
-    if(e.button === 2) {
-      e.preventDefault()
+if ('touches' in e || 'button' in e && e.button ===2)
+
     setIsDragging(true);
-    setStartDrag({ x: e.clientX, y: e.clientY });
+    const {clientX , clientY} = 'touches' in e ? e.touches[0] : e;
+    setStartDrag({ x: clientX, y: clientY });
   }
-  };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+
+  const handleMouseMove = (e: React.MouseEvent | React.TouchEvent) => {
     if (isDragging) {
-      const deltaX = e.clientX - startDrag.x;
-      const deltaY = e.clientY - startDrag.y;
-      setStartDrag({ x: e.clientX, y: e.clientY });
+      const {clientX , clientY} = 'touches' in e ? e.touches[0] : e;
+      const deltaX = clientX - startDrag.x;
+      const deltaY = clientY - startDrag.y;
+      setStartDrag({ x: clientX, y: clientY });
       setOffsetX(offsetX + deltaX);
       setOffsetY(offsetY + deltaY);
       extendGrid(); // Étendre la grille si on approche des bords
@@ -266,8 +268,11 @@ const {startRow, endRow, startCol, endCol} = calculateVisibleCells(canvasRef, of
       style={{ backgroundColor : "black", cursor: isDragging ? "grabbing" : "grab" }}
       onContextMenu={(e) => e.preventDefault()}
       onMouseDown={handleMouseDown}
+      onTouchStart={handleMouseDown}
       onMouseMove={handleMouseMove}
+      onTouchMove={handleMouseMove}
       onMouseUp={handleMouseUp}
+      onTouchEnd={handleMouseUp}
       onClick={handleCanvasClick}
     />
   );

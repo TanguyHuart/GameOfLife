@@ -3,6 +3,7 @@ import { useRulesContext } from '@/context/RulesContext';
 import './Menu.css'
 import {createCanvasGrid} from '@/functions/CreateGride';
 import { useGridContext } from '@/context/GridContext';
+import { useState } from 'react';
 
 
 function Menu() {
@@ -22,13 +23,13 @@ const {
 } = useRulesContext()
 
 const {setGrid , setOffsetX, setOffsetY, showGrid, setShowGrid} = useGridContext()
-
+const [menuisOpen, setMenuIsOpen] =useState(false)
 
 const rows = 200
 const cols = 200
 
-  return (
-    <nav className='menu'>
+  return (<div className={`menu_container ${menuisOpen ? '' : 'hidden'}`}>    
+  <nav className='menu'>
       <div>
         <h1 className='menu_title'>GAME OF LIFE</h1>
       </div>
@@ -74,6 +75,27 @@ const cols = 200
       </div>
       </div>
     </nav>
+    <div className='menu_mobile_buttons'>
+      <div>
+        <button className='mobile_menu_button' type="button" onClick={()=> setMenuIsOpen(!menuisOpen)}>Menu</button>
+      </div>
+<div>
+   <button className='mobile_run_button' onClick={() => setIsRunning(!isRunning)} type="button">
+    {isRunning && "Stop"}
+    {!isRunning && "Run"}
+    </button>
+</div>
+<div>
+  <button className='mobile_reset_button' onClick={() => {
+          setOffsetX(0);
+          setOffsetY(0);
+          setGrid(createCanvasGrid(rows, cols)); 
+          setIsRunning(false)
+          }} type="button">Reset</button>
+</div>
+    </div>
+    </div>
+
   );
 }
 
