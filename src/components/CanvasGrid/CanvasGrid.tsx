@@ -23,12 +23,21 @@ function CanvasGrid() {
   const [startDrag, setStartDrag] = useState({ x: 0, y: 0 });
   const [canvasDimensions, setCanvasDimensions] = useState({width : 800, height : 600})
 
+  const [isPinching, setIsPinching] = useState(false);
+const [initialPinchDistance, setInitialPinchDistance] = useState(0);
 
   // Fonction pour gérer l'inversion de l'état d'une cellule
   const toggleCell = (x: number, y: number) => {
     const newGrid = grid.map(row => [...row]);
     newGrid[y][x] = grid[y][x] === 1 ? 0 : 1;
     setGrid(newGrid);
+  };
+
+  const getDistance = (touch1: React.Touch, touch2: React.Touch) => {
+    return Math.sqrt(
+      Math.pow(touch2.clientX - touch1.clientX, 2) +
+      Math.pow(touch2.clientY - touch1.clientY, 2)
+    );
   };
 
   const nextGeneration = useCallback(() => {
@@ -172,6 +181,45 @@ if ('touches' in e || 'button' in e && e.button ===2)
     }
   };
 
+  const handleTouchMove = (e: React.TouchEvent) => {
+  
+    if (e.touches.length === 2) {
+      console.log('coucou');
+      
+      const distance = getDistance(e.touches[0], e.touches[1]);
+  
+      if (!isPinching) {
+        setIsPinching(true);
+        setInitialPinchDistance(distance);
+        return;
+      }
+  
+      const scale = distance / initialPinchDistance;
+      const newCellSize = Math.max(1, Math.min(100, cellSize * scale));
+  
+      // Ajuster les offsets pour garder la position cohérente lors du zoom
+      const rect = canvasRef.current?.getBoundingClientRect();
+      if (!rect) return;
+  
+      const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+      const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+  
+      setOffsetX((prevOffsetX) => (centerX - (centerX - prevOffsetX) * (newCellSize / cellSize)));
+      setOffsetY((prevOffsetY) => (centerY - (centerY - prevOffsetY) * (newCellSize / cellSize)));
+      setCellSize(newCellSize);
+    }
+    else if (e.touches.length === 1) {
+      handleMouseMove(e)
+    }
+  };
+  
+  const handleTouchEnd = () => {
+    if (isPinching) {
+      setIsPinching(false);
+      setInitialPinchDistance(0);
+    }
+  };
+
   const handleMouseUp = () => {
     setIsDragging(false);
   };
@@ -270,9 +318,9 @@ const {startRow, endRow, startCol, endCol} = calculateVisibleCells(canvasRef, of
       onMouseDown={handleMouseDown}
       onTouchStart={handleMouseDown}
       onMouseMove={handleMouseMove}
-      onTouchMove={handleMouseMove}
+      onTouchMove={handleTouchMove}
       onMouseUp={handleMouseUp}
-      onTouchEnd={handleMouseUp}
+      onTouchEnd={() => {handleMouseUp(); handleTouchEnd()}}
       onClick={handleCanvasClick}
     />
   );
