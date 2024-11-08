@@ -6,6 +6,7 @@ import countNeighbors from "@/functions/CountNeighbors";
 import { useGridContext } from "@/context/GridContext";
 import { createCanvasGrid } from "@/functions/CreateGride";
 import calculateVisibleCells from "@/functions/CalculateVisibleCells";
+import './CanvasGrid.css'
 
 function CanvasGrid() {
 
@@ -19,25 +20,17 @@ function CanvasGrid() {
   const {grid, setGrid, offsetX, setOffsetX, offsetY, setOffsetY, showGrid} = useGridContext()
 
   const [cellSize, setCellSize] = useState(20);
+  const [zoom , setZoom] = useState(1.3);
   const [isDragging, setIsDragging] = useState(false);
   const [startDrag, setStartDrag] = useState({ x: 0, y: 0 });
   const [canvasDimensions, setCanvasDimensions] = useState({width : 800, height : 600})
 
-  const [isPinching, setIsPinching] = useState(false);
-const [initialPinchDistance, setInitialPinchDistance] = useState(0);
 
   // Fonction pour gérer l'inversion de l'état d'une cellule
   const toggleCell = (x: number, y: number) => {
     const newGrid = grid.map(row => [...row]);
     newGrid[y][x] = grid[y][x] === 1 ? 0 : 1;
     setGrid(newGrid);
-  };
-
-  const getDistance = (touch1: React.Touch, touch2: React.Touch) => {
-    return Math.sqrt(
-      Math.pow(touch2.clientX - touch1.clientX, 2) +
-      Math.pow(touch2.clientY - touch1.clientY, 2)
-    );
   };
 
   const nextGeneration = useCallback(() => {
@@ -123,7 +116,6 @@ const [initialPinchDistance, setInitialPinchDistance] = useState(0);
     const scale = e.deltaY < 0 ? zoomFactor : 1 / zoomFactor;
    
     const newCellSize = Math.max(1, Math.min(100, cellSize * scale));
-    // Ajuster les offsets pour garder la position du curseur cohérente
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -137,6 +129,9 @@ const [initialPinchDistance, setInitialPinchDistance] = useState(0);
   
     setCellSize(newCellSize);
   };
+
+ 
+
 
   // Gestion du clic pour inverser l'état des cellules
   const handleCanvasClick = (e: React.MouseEvent) => {
@@ -168,6 +163,14 @@ if ('touches' in e || 'button' in e && e.button ===2)
     setStartDrag({ x: clientX, y: clientY });
   }
 
+  const handleTouchStart = async (e : React.TouchEvent) => {
+   await setIsDragging(true);
+   console.log(isDragging);
+   
+    const {clientX , clientY} =  e.touches[0]
+    setStartDrag({x: clientX, y: clientY })
+  }
+
 
   const handleMouseMove = (e: React.MouseEvent | React.TouchEvent) => {
     if (isDragging) {
@@ -181,45 +184,6 @@ if ('touches' in e || 'button' in e && e.button ===2)
     }
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-  
-    if (e.touches.length === 2) {
-      console.log('coucou');
-      
-      const distance = getDistance(e.touches[0], e.touches[1]);
-  
-      if (!isPinching) {
-        setIsPinching(true);
-        setInitialPinchDistance(distance);
-        return;
-      }
-  
-      const scale = distance / initialPinchDistance;
-      const newCellSize = Math.max(1, Math.min(100, cellSize * scale));
-  
-      // Ajuster les offsets pour garder la position cohérente lors du zoom
-      const rect = canvasRef.current?.getBoundingClientRect();
-      if (!rect) return;
-  
-      const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
-      const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
-  
-      setOffsetX((prevOffsetX) => (centerX - (centerX - prevOffsetX) * (newCellSize / cellSize)));
-      setOffsetY((prevOffsetY) => (centerY - (centerY - prevOffsetY) * (newCellSize / cellSize)));
-      setCellSize(newCellSize);
-    }
-    else if (e.touches.length === 1) {
-      handleMouseMove(e)
-    }
-  };
-  
-  const handleTouchEnd = () => {
-    if (isPinching) {
-      setIsPinching(false);
-      setInitialPinchDistance(0);
-    }
-  };
-
   const handleMouseUp = () => {
     setIsDragging(false);
   };
@@ -230,6 +194,31 @@ if ('touches' in e || 'button' in e && e.button ===2)
       setCanvasDimensions({ width: window.innerWidth, height: window.innerHeight });
     }
   };
+
+  useEffect(() => { 
+    const handleZoom = (zoom : number) => {
+
+      const minCellSize = 5;   // Taille de cellule minimale
+      const maxCellSize = 100; // Taille de cellule maximale
+  
+      // Calcul de la taille de cellule en fonction de zoom, proportionnellement entre min et max
+      const newCellSize = minCellSize + (maxCellSize - minCellSize) * (zoom - 1);
+  
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = window.innerWidth / 2 - rect.left;
+    const mouseY = window.innerHeight / 2 - rect.top;
+
+    setOffsetX((prevOffsetX) => (mouseX - (mouseX - prevOffsetX) * (newCellSize / cellSize)));
+    setOffsetY((prevOffsetY) => (mouseY - (mouseY - prevOffsetY) * (newCellSize / cellSize)));
+  
+    setCellSize(newCellSize);
+    }
+    handleZoom(zoom)
+  }, [zoom, setOffsetX, setOffsetY])
 
   // Utiliser useEffect pour s'assurer que les dimensions sont mises à jour après le montage côté client
   useEffect(() => {
@@ -309,6 +298,7 @@ const {startRow, endRow, startCol, endCol} = calculateVisibleCells(canvasRef, of
   }, [grid, offsetX, offsetY, showGrid, cellSize]);
 
   return (
+    <>
     <canvas
       ref={canvasRef}
       width={canvasDimensions.width} // Dimensions du canvas
@@ -316,13 +306,26 @@ const {startRow, endRow, startCol, endCol} = calculateVisibleCells(canvasRef, of
       style={{ backgroundColor : "black", cursor: isDragging ? "grabbing" : "grab" }}
       onContextMenu={(e) => e.preventDefault()}
       onMouseDown={handleMouseDown}
-      onTouchStart={handleMouseDown}
+      onTouchStart={(e) => handleTouchStart(e)}
       onMouseMove={handleMouseMove}
-      onTouchMove={handleTouchMove}
+      onTouchMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      onTouchEnd={() => {handleMouseUp(); handleTouchEnd()}}
+      onTouchEnd={handleMouseUp}
       onClick={handleCanvasClick}
     />
+    <div className="zoom_input_container">
+      <label htmlFor="zoom_input">Zoom</label>
+      <div className="zoom_input">
+        <div className="zoom_input_symbol">
+          <p>-</p>
+          <p>+</p>
+        </div>
+      <input id="zoom_input" className="zoom_input" type="range" min={1} max={1.1} step="any" placeholder="1.1" value={zoom} onChange={(e) => setZoom(parseFloat(e.target.value))}/>
+
+      </div>
+        </div>
+   
+    </>
   );
 }
 
