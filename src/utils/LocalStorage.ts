@@ -1,8 +1,13 @@
 export class LocalStorage {
+
   static getItem(key: string) {
-    const value = localStorage.getItem(key);
-    if (!value) return null;
-    return JSON.parse(value);
+    if (typeof window !== 'undefined') {
+      const value = localStorage.getItem(key);
+      if (!value) return null;
+      return JSON.parse(value);
+    }
+    return null
+ 
   }
 
   static setItem(key: string, value: unknown) {
