@@ -7,23 +7,31 @@ import { useGridContext } from "@/context/GridContext";
 import { createCanvasGrid } from "@/functions/CreateGride";
 import calculateVisibleCells from "@/functions/CalculateVisibleCells";
 import './CanvasGrid.css'
+import ConfirmSelectedPattern from "../ConfirmSelectedPattern/ConfirmSelectedPattern";
 
 function CanvasGrid() {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rows = 200; // Nombre initial de lignes
   const cols = 200; // Nombre initial de colonnes
-  const bufferZone = 50; // Distance avant d'étendre la grille
-
+  const bufferZone = 10; // Distance avant d'étendre la grille
+  const dragBuffer = 5
+  // Etat pour les règes du jeu
   const { lifeIsKeptWithMax, lifeIsKeptWithMin, lifeIsCreatedWith, interval, isRunning } = useRulesContext();
   // État pour la grille et les décalages
-  const {grid, setGrid, offsetX, setOffsetX, offsetY, setOffsetY, showGrid} = useGridContext()
-
+  const {grid, setGrid, offsetX, setOffsetX, offsetY, setOffsetY, showGrid, savedGrid, zoom, selectionMode} = useGridContext()
   const [cellSize, setCellSize] = useState(20);
-  const [zoom , setZoom] = useState(1.3);
   const [isDragging, setIsDragging] = useState(false);
+  const [isMouseDown, setIsMouseDown] = useState(false)
   const [startDrag, setStartDrag] = useState({ x: 0, y: 0 });
   const [canvasDimensions, setCanvasDimensions] = useState({width : 800, height : 600})
+
+  
+  const [startSelectArea, setStartSelectedArea] = useState<{x : number, y : number} | null> ({ x: 0, y: 0 })
+  const  [endSelectArea, setEndSelectArea] = useState<{x : number, y : number} | null>({x: 0, y: 0})
+  const [selectedGrid, setSelectedGrid] = useState<number[][] | null>(null)
+
+  
 
 
   // Fonction pour gérer l'inversion de l'état d'une cellule
@@ -32,6 +40,47 @@ function CanvasGrid() {
     newGrid[y][x] = grid[y][x] === 1 ? 0 : 1;
     setGrid(newGrid);
   };
+
+const getRectPosition = (event : React.MouseEvent | React.TouchEvent) => {
+  const canvas = canvasRef.current
+  if (!canvas) return {x : 0,y : 0}
+  const {clientX , clientY} = 'touches' in event ? event.changedTouches[0] : event;
+
+  const rect = canvas.getBoundingClientRect();
+
+  const x = Math.floor((clientX - rect.left - offsetX) / cellSize);
+  const y = Math.floor((clientY - rect.top - offsetY) / cellSize);
+
+  return {x,y}
+}
+
+const saveSelection = () => {
+  console.log(startSelectArea);
+  console.log(endSelectArea);
+  
+  
+  if (startSelectArea && endSelectArea) {
+  const startX = Math.min (startSelectArea?.x, endSelectArea.x )
+  const startY = Math.min (startSelectArea.y, endSelectArea.y)
+  const endX = Math.max(startSelectArea.x,  endSelectArea.x)
+  const endY = Math.max( startSelectArea.y, endSelectArea.y)
+
+  const pattern = []
+  for (let i = startY; i <= endY; i++) {
+    pattern.push(grid[i].slice(startX, endX + 1));
+  }  
+  setSelectedGrid(pattern)
+  setStartSelectedArea(null)
+  setEndSelectArea(null)
+
+}
+else {
+  setEndSelectArea(null)
+  setStartSelectedArea(null)
+  setSelectedGrid(null)
+}
+
+}
 
   const nextGeneration = useCallback(() => {
     setGrid(prevGrid => {
@@ -109,42 +158,13 @@ function CanvasGrid() {
     setGrid(newGrid);
   };
 
-  const handleWheel = (e: WheelEvent) => {
-    e.preventDefault(); // Empêcher le défilement par défaut
-
-    const zoomFactor = 1.05;
-    const scale = e.deltaY < 0 ? zoomFactor : 1 / zoomFactor;
-   
-    const newCellSize = Math.max(1, Math.min(100, cellSize * scale));
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-
-    setOffsetX((prevOffsetX) => (mouseX - (mouseX - prevOffsetX) * (newCellSize / cellSize)));
-    setOffsetY((prevOffsetY) => (mouseY - (mouseY - prevOffsetY) * (newCellSize / cellSize)));
-  
-    setCellSize(newCellSize);
-  };
-
- 
-
 
   // Gestion du clic pour inverser l'état des cellules
-  const handleCanvasClick = (e: React.MouseEvent) => {
+  const handleCanvasClick = (e: React.MouseEvent | React.TouchEvent ) => {
     e.preventDefault()
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    
-
-    const rect = canvas.getBoundingClientRect();
-
-    const x = Math.floor((e.clientX - rect.left - offsetX) / cellSize);
-    const y = Math.floor((e.clientY - rect.top - offsetY) / cellSize);
+   
+    const x = getRectPosition(e).x
+    const y = getRectPosition(e).y
 
     if (x >= 0 && y >= 0 && x < grid[0].length && y < grid.length) {
       toggleCell(x, y);
@@ -154,29 +174,52 @@ function CanvasGrid() {
 
 
   // Gestion du drag pour déplacer la grille
-  const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleMouseDown = (e: React.MouseEvent ) => {
 
-if ('touches' in e || 'button' in e && e.button ===2)
-
-    setIsDragging(true);
-    const {clientX , clientY} = 'touches' in e ? e.touches[0] : e;
+if (e.button === 2) {
+    setIsMouseDown(true)
+    setIsDragging(false);
+    const {clientX , clientY} =  e;
     setStartDrag({ x: clientX, y: clientY });
   }
 
-  const handleTouchStart = async (e : React.TouchEvent) => {
-   await setIsDragging(true);
-   console.log(isDragging);
+  if (e.button === 0 && selectionMode ) {
+   
+setIsMouseDown(true)
+setStartSelectedArea(getRectPosition(e))
+  }
+}
+
+  const handleTouchStart = (e : React.TouchEvent) => {
+  setIsMouseDown(true)
+   setIsDragging (false)
    
     const {clientX , clientY} =  e.touches[0]
     setStartDrag({x: clientX, y: clientY })
   }
 
 
-  const handleMouseMove = (e: React.MouseEvent | React.TouchEvent) => {
-    if (isDragging) {
-      const {clientX , clientY} = 'touches' in e ? e.touches[0] : e;
-      const deltaX = clientX - startDrag.x;
-      const deltaY = clientY - startDrag.y;
+const handleMouseMove = (e: React.MouseEvent | React.TouchEvent) => {
+
+  if (!isMouseDown ) {
+    return
+  }
+
+  const {clientX , clientY} = 'touches' in e ? e.touches[0] : e;
+  const deltaX = clientX - startDrag.x;
+  const deltaY = clientY - startDrag.y;
+
+  if (!selectionMode && (Math.abs(deltaX) > dragBuffer || Math.abs(deltaY) > dragBuffer)) {
+    setIsDragging(true);
+  }
+  
+  if (selectionMode) {  
+      
+    setEndSelectArea(getRectPosition(e))
+  }
+
+  if (isDragging) {
+
       setStartDrag({ x: clientX, y: clientY });
       setOffsetX(offsetX + deltaX);
       setOffsetY(offsetY + deltaY);
@@ -184,9 +227,29 @@ if ('touches' in e || 'button' in e && e.button ===2)
     }
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e: React.MouseEvent | React.TouchEvent) => {
+    setIsMouseDown(false)
+
+    if (!isDragging && !selectionMode) {
+      handleCanvasClick(e)
+    }
+
+    if (selectionMode) {
+      saveSelection()
+    }
     setIsDragging(false);
   };
+
+  const handleTouchEnd = (e : React.TouchEvent) => {
+    setIsMouseDown(false)
+
+    if (!isDragging) {
+      handleCanvasClick(e)
+    }
+    setIsDragging(false)
+  }
+
+
 
   // Fonction pour récupérer les dimensions de la fenêtre (côté client)
   const updateCanvasDimensions = () => {
@@ -203,6 +266,8 @@ if ('touches' in e || 'button' in e && e.button ===2)
   
       // Calcul de la taille de cellule en fonction de zoom, proportionnellement entre min et max
       const newCellSize = minCellSize + (maxCellSize - minCellSize) * (zoom - 1);
+      console.log(newCellSize);
+      
   
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -218,7 +283,10 @@ if ('touches' in e || 'button' in e && e.button ===2)
     setCellSize(newCellSize);
     }
     handleZoom(zoom)
-  }, [zoom, setOffsetX, setOffsetY])
+
+  }, [zoom, setOffsetX, setOffsetY, cellSize ])
+
+
 
   // Utiliser useEffect pour s'assurer que les dimensions sont mises à jour après le montage côté client
   useEffect(() => {
@@ -230,29 +298,16 @@ if ('touches' in e || 'button' in e && e.button ===2)
     };
   }, []);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (canvas) {
-      canvas.addEventListener("wheel", handleWheel);
-    }
-
-    return () => {
-      if (canvas) {
-        canvas.removeEventListener("wheel", handleWheel);
-      }
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cellSize]);
-
 
   useEffect(() => {
-    setGrid(createCanvasGrid(rows,cols))
-  },[setGrid])
+    setGrid(createCanvasGrid(rows,cols, savedGrid))
+  },[setGrid, savedGrid])
 
   useEffect(() => {
     let intervalId : number | undefined;
-  
+    
     if (isRunning) {
+
       intervalId = window.setInterval(nextGeneration, interval); // Démarrer l'intervalle si isRunning est vrai
     }
   
@@ -264,10 +319,12 @@ if ('touches' in e || 'button' in e && e.button ===2)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRunning, interval]);
 
+
   // Mise à jour de la grille sur le canvas à chaque changement d'état
   useEffect(() => {
     // Fonction pour dessiner la grille sur le canvas
   const drawGrid = () => {
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -275,6 +332,8 @@ if ('touches' in e || 'button' in e && e.button ===2)
 
     // J'Efface le canvas avant de redessiner
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+
 
 const {startRow, endRow, startCol, endCol} = calculateVisibleCells(canvasRef, offsetX, offsetY, cellSize, grid)
 
@@ -286,16 +345,31 @@ const {startRow, endRow, startCol, endCol} = calculateVisibleCells(canvasRef, of
         
         ctx.fillStyle = grid[i][j] === 1 ? "white" : "black";
         ctx.fillRect(x, y, cellSize, cellSize);
-        if(showGrid && cellSize > 15) {
-          ctx.strokeStyle =  'gray'; 
+        if(showGrid && cellSize > 10) {
+          ctx.strokeStyle =  'rgb(61, 61, 61)'; 
           ctx.strokeRect(x, y, cellSize, cellSize); // Contour de la cellule
         }
 
       }
     }
+
+    if (startSelectArea && endSelectArea && selectionMode) {
+      const x = startSelectArea.x * cellSize + offsetX;
+      const y = startSelectArea.y * cellSize + offsetY;
+      const width = (endSelectArea.x - startSelectArea.x + 1) * cellSize;
+      const height = (endSelectArea.y - startSelectArea.y + 1) * cellSize;
+  
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x, y, width, height);
+    }
   };
-    drawGrid();
-  }, [grid, offsetX, offsetY, showGrid, cellSize]);
+
+    drawGrid ()
+
+   
+  }, [grid, offsetX, offsetY, showGrid, cellSize, startSelectArea, endSelectArea]);
+
 
   return (
     <>
@@ -303,28 +377,17 @@ const {startRow, endRow, startCol, endCol} = calculateVisibleCells(canvasRef, of
       ref={canvasRef}
       width={canvasDimensions.width} // Dimensions du canvas
       height={canvasDimensions.height} // Dimensions du canvas
-      style={{ backgroundColor : "black", cursor: isDragging ? "grabbing" : "grab" }}
+      style={{ backgroundColor : "black", cursor: isDragging ? "grabbing" : "" }}
       onContextMenu={(e) => e.preventDefault()}
       onMouseDown={handleMouseDown}
-      onTouchStart={(e) => handleTouchStart(e)}
+      onTouchStart={handleTouchStart}
       onMouseMove={handleMouseMove}
       onTouchMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      onTouchEnd={handleMouseUp}
-      onClick={handleCanvasClick}
-    />
-    <div className="zoom_input_container">
-      <label htmlFor="zoom_input">Zoom</label>
-      <div className="zoom_input">
-        <div className="zoom_input_symbol">
-          <p>-</p>
-          <p>+</p>
-        </div>
-      <input id="zoom_input" className="zoom_input" type="range" min={1} max={1.1} step="any" placeholder="1.1" value={zoom} onChange={(e) => setZoom(parseFloat(e.target.value))}/>
+      onTouchEnd={handleTouchEnd}
 
-      </div>
-        </div>
-   
+    />
+    {selectedGrid && <ConfirmSelectedPattern pattern={selectedGrid} setPattern={setSelectedGrid} />}
     </>
   );
 }

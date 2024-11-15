@@ -2,7 +2,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 20%;
+  width: 30rem;
   height: 100vh;
   z-index: 10;
   display: flex;
@@ -12,8 +12,57 @@
 .menu {
   background-color: rgb(54, 54, 54);
   padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
+  overflow-y: auto;
+  scrollbar-width: thin;
 
 }
+
+.menu_section{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+width: 100%;
+}
+
+.menu_section_models_list {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.zoom_input_container {
+  position: fixed;
+  width: 60%;
+  bottom: 20px;
+  right: 10px;
+  color: white;
+  display: flex;
+  align-items: flex-end;
+  font-size: 1.1rem;
+  gap: 1rem;
+}
+
+.zoom_input {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.zoom_input_symbol {
+  display: flex;
+  justify-content: space-between ;
+  font-size: 1.5rem;
+  font-weight: bold;
+
+}
+
+
 
 @media screen and (min-width : 768px) {
   .menu_mobile_buttons {
@@ -21,6 +70,8 @@
   } 
   
 }
+
+
 
 .menu_title {
   padding: 0.5rem;
@@ -41,6 +92,12 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 1rem;
+}
+
+.menu_section_title {
+  color: white;
+  text-transform: uppercase;
+  font-size: 1.3rem;
 }
 
 .options_items {
@@ -65,6 +122,40 @@
   gap: 1rem;
   align-items: center;
 }
+
+.mode_button_container {
+ display: inline-flex;
+ border: 1px solid lightgray;
+ border-radius: 10px;
+ overflow: hidden;
+
+
+}
+
+.mode_button {
+padding: 0.5rem 1rem;
+transition: all 200ms ease-in-out;
+color: dimgray;
+background-color: lightgray;
+border: none;
+}
+
+.mode_button:hover {
+  color: darkblue;
+}
+
+
+ .selected {
+  background-color: royalblue;
+  color: white;
+}
+
+.hideGrid_button {
+  padding: 1rem 0.5rem;
+  border: 1px solid grey;
+  border-radius: 10px;
+}
+
 .run_button {
   padding: 1rem;
   background-color: green;
@@ -91,28 +182,42 @@
   background-color: darkred;
 }
 
+.clear_button {
+  padding: 1rem;
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  border: 1px solid rgb(97, 97, 97);
+  border-radius: 10px;
+  transition: all 200ms ease-in-out;
+}
+
+.clear_button:hover {
+  background-color: rgb(97, 97, 97);
+}
+
 @media screen and (max-width : 768px ) {
   
   .menu_container {
-width: 100vw;
+width: 80vw;
 height: 100vh;
 transition: transform 200ms ease-in-out;
 
   }
 
   .hidden {
-transform: translateX(-80%);
+transform: translateX(-100%);
   }
 
 
-  .menu {
-    width: 80%;
-  }
+
 
   .menu_mobile_buttons {
+ position: absolute;
+ top: 0;
+ right: -25%;
     background-color: rgb(54, 54, 54);
     color: black;
-    width: 20%;
+    width: 25%;
     height: 10%;
     
 

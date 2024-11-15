@@ -4,12 +4,18 @@ type GridContextProps = {
 
    grid : number[][]
    setGrid : React.Dispatch<React.SetStateAction<number[][]>>
+   savedGrid : number[][] | null,
+   setSavedGrid : React.Dispatch<React.SetStateAction<number[][] | null>>
    offsetX : number;
    setOffsetX : React.Dispatch<React.SetStateAction<number>>
    offsetY : number;
    setOffsetY : React.Dispatch<React.SetStateAction<number>>
    showGrid : boolean,
-   setShowGrid : React.Dispatch<React.SetStateAction<boolean>>
+   setShowGrid : React.Dispatch<React.SetStateAction<boolean>>,
+   zoom : number,
+   setZoom : React.Dispatch<React.SetStateAction<number>>,
+   selectionMode : boolean
+   setSelectionMode : React.Dispatch<React.SetStateAction<boolean>>
 }
 
 
@@ -20,14 +26,17 @@ export const GridProvider = ({ children }: Readonly<{
 }>) => {
 
   const [grid, setGrid ] = useState<number[][]>([])
+  const [savedGrid , setSavedGrid] = useState<number[][] | null>(null)
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
-  const [showGrid, setShowGrid] = useState(true)
+  const [showGrid, setShowGrid] = useState(true);
+  const [zoom , setZoom] = useState(1.3);
+  const [selectionMode, setSelectionMode] = useState(false)
   
 
   return (
 
-    <GridContext.Provider value={{  grid, setGrid, offsetX, setOffsetX, offsetY, setOffsetY, showGrid, setShowGrid  }} >
+    <GridContext.Provider value={{  grid, setGrid, offsetX, setOffsetX, offsetY, setOffsetY, showGrid, setShowGrid, savedGrid, setSavedGrid, zoom, setZoom, selectionMode, setSelectionMode  }} >
       {children}
     </GridContext.Provider>
 

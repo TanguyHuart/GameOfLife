@@ -1,0 +1,19 @@
+.savedPatternItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid white;
+  border-radius: 10px;
+  box-shadow: 1px 1px 1px black ;
+transition: all 200ms ease-in-out;
+background-color: white;
+color: black;
+width: 48%;
+gap : 1rem;
+padding: 0.5rem
+}
+
+.savedPatternItem:hover {
+  scale :1.05
+
+}
