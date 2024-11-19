@@ -1,5 +1,10 @@
-import { useEffect, useRef } from "react";
+'use client'
+
+import { useEffect, useRef, useState } from "react";
 import "./SavedPatternItem.css"
+import { useGridContext } from "@/context/GridContext";
+import { LocalStorage } from "@/utils/LocalStorage";
+import { TPattern } from "@/@types";
 
 type SavedPatternItemProps = {
   savedPattern : {
@@ -9,11 +14,40 @@ type SavedPatternItemProps = {
 }
 
 function SavedPatternItem({savedPattern} : SavedPatternItemProps) {
-  
+  const [isClient, setIsClient] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const cellSize = 10
+  const {setSelectedSavePattern, selectedSavePattern} = useGridContext()
+  const [patternIsSelected, setPatternIsSelected] = useState(false)
+
+  const handleClickPattern = () => {
+    setSelectedSavePattern (savedPattern)
+    
+  }
+
+  const handleDeletePattern = () => {
+    let patternList : TPattern[] = LocalStorage.getItem('savedPatterns')
+    patternList = patternList.filter((pattern) => pattern.name !== savedPattern.name)
+    LocalStorage.setItem('savedPatterns', patternList)
+  }
 
   useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {    
+    if (selectedSavePattern?.name == savedPattern.name) {
+      setPatternIsSelected (true)
+    } 
+    else {
+      
+      setPatternIsSelected(false)
+    }
+  }, [selectedSavePattern, savedPattern])
+
+  useEffect(() => {
+
+    if (!isClient) return
 
     const canvas = canvasRef.current
     if (!canvas) return;
@@ -37,8 +71,10 @@ function SavedPatternItem({savedPattern} : SavedPatternItemProps) {
     }
   })
 
+  if (!isClient) return null;
+
   return (
-    <div className="savedPatternItem">
+    <div className={`savedPatternItem ${patternIsSelected ? 'isSelected' : ''}` } onClick={handleClickPattern}>
       <p>{savedPattern.name}</p>
       <div className='canvas_container'>
         {savedPattern.grid && <canvas
@@ -47,6 +83,9 @@ function SavedPatternItem({savedPattern} : SavedPatternItemProps) {
           width={savedPattern.grid[0].length * cellSize}
           height={savedPattern.grid.length * cellSize}
         />}
+    </div>
+    <div className="deleteButtonContainer">
+          <button className="deleteButton" onClick={handleDeletePattern} type="button">X</button>
     </div>
   </div>
   );

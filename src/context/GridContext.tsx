@@ -1,3 +1,4 @@
+import { TPattern } from '@/@types';
 import React, { createContext, useContext, useState } from 'react';
 
 type GridContextProps = {
@@ -15,7 +16,9 @@ type GridContextProps = {
    zoom : number,
    setZoom : React.Dispatch<React.SetStateAction<number>>,
    selectionMode : boolean
-   setSelectionMode : React.Dispatch<React.SetStateAction<boolean>>
+   setSelectionMode : React.Dispatch<React.SetStateAction<boolean>>,
+   selectedSavePattern : TPattern | null,
+   setSelectedSavePattern : React.Dispatch<React.SetStateAction<TPattern | null>>,
 }
 
 
@@ -32,11 +35,12 @@ export const GridProvider = ({ children }: Readonly<{
   const [showGrid, setShowGrid] = useState(true);
   const [zoom , setZoom] = useState(1.3);
   const [selectionMode, setSelectionMode] = useState(false)
+  const [selectedSavePattern, setSelectedSavePattern] = useState<TPattern | null >(null) 
   
 
   return (
 
-    <GridContext.Provider value={{  grid, setGrid, offsetX, setOffsetX, offsetY, setOffsetY, showGrid, setShowGrid, savedGrid, setSavedGrid, zoom, setZoom, selectionMode, setSelectionMode  }} >
+    <GridContext.Provider value={{  grid, setGrid, offsetX, setOffsetX, offsetY, setOffsetY, showGrid, setShowGrid, savedGrid, setSavedGrid, zoom, setZoom, selectionMode, setSelectionMode, selectedSavePattern, setSelectedSavePattern  }} >
       {children}
     </GridContext.Provider>
 

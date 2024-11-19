@@ -1,3 +1,5 @@
+'use client'
+
 /* eslint-disable react/no-unescaped-entities */
 import { useRulesContext } from '@/context/RulesContext';
 import './Menu.css'
@@ -30,10 +32,8 @@ const [menuisOpen, setMenuIsOpen] =useState(false)
 const rows = 200
 const cols = 200
 
-console.log(LocalStorage.getItem('savedPatterns'));
 
 const handleClickRun = async () => {
-
   if (!isRunning) {    
     setSavedGrid(grid) 
   }
@@ -42,10 +42,7 @@ const handleClickRun = async () => {
 
   return (
 <>
-  <div className={`menu_container ${menuisOpen ? '' : 'hidden'}`}>  
- 
-   
-     
+  <div className={`menu_container ${menuisOpen ? '' : 'hidden'}`}>    
   <nav className='menu'>
   <h1 className='menu_title'>GAME OF LIFE</h1>
       <div className='menu_board'>
