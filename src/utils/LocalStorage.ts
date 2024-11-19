@@ -3,6 +3,7 @@ export class LocalStorage {
   static getItem(key: string) {
     if (typeof window !== 'undefined') {
       const value = localStorage.getItem(key);
+     
       if (!value) return null;
       return JSON.parse(value);
     }
@@ -12,6 +13,7 @@ export class LocalStorage {
 
   static setItem(key: string, value: unknown) {
     localStorage.setItem(key, JSON.stringify(value));
+    dispatchEvent(new Event ('storageChange'))
   }
 
   static removeItem(key: string) {

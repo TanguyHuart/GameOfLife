@@ -5,9 +5,10 @@ import { useRulesContext } from '@/context/RulesContext';
 import './Menu.css'
 import {clearCanvasGrid, createCanvasGrid} from '@/functions/CreateGride';
 import { useGridContext } from '@/context/GridContext';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LocalStorage } from '@/utils/LocalStorage';
 import SavedPatternItem from '../SavedPatternItem/SavedPatternItem';
+import { TPattern } from '@/@types';
 
 
 function Menu() {
@@ -28,9 +29,12 @@ const {
 
 const {grid, setGrid , setOffsetX, setOffsetY, showGrid, setShowGrid, savedGrid, setSavedGrid, zoom, setZoom,selectionMode, setSelectionMode} = useGridContext()
 const [menuisOpen, setMenuIsOpen] =useState(false)
+const [savedPatterns,  setSavedPatterns] = useState<TPattern[]>([])
 
 const rows = 200
 const cols = 200
+
+
 
 
 const handleClickRun = async () => {
@@ -39,6 +43,23 @@ const handleClickRun = async () => {
   }
   setIsRunning(!isRunning)
 }
+
+useEffect(() => {
+  const loadPatterns = () => {
+    const patterns = LocalStorage.getItem('savedPatterns') || [];
+    setSavedPatterns(patterns);
+  };
+
+  // Charger les données initiales
+  loadPatterns();
+
+  // Écouter les changements du LocalStorage
+  window.addEventListener('storageChange', loadPatterns);
+
+  return () => {
+    window.removeEventListener('storageChange', loadPatterns);
+  };
+}, []);
 
   return (
 <>
@@ -104,7 +125,7 @@ const handleClickRun = async () => {
         <p className='menu_section_title'>Models saved</p>
         
         <div className='menu_section_models_list'>
-          {LocalStorage.getItem('savedPatterns') && LocalStorage.getItem('savedPatterns').map((pattern : {name : string , grid : number[][]}, index : number) => (
+          {savedPatterns && savedPatterns.map((pattern : {name : string , grid : number[][]}, index : number) => (
             <SavedPatternItem key={index} savedPattern={pattern}/>
           ))}
     

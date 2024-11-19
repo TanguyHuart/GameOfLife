@@ -382,7 +382,7 @@ setCursorRectPosition(getRectPosition(e))
       ref={canvasRef}
       width={canvasDimensions.width} // Dimensions du canvas
       height={canvasDimensions.height} // Dimensions du canvas
-      style={{ backgroundColor : "black", cursor: isDragging ? "grabbing" : "" }}
+      style={{ backgroundColor : "black", cursor: isDragging ? "grabbing" : "none" }}
       onContextMenu={(e) => e.preventDefault()}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}

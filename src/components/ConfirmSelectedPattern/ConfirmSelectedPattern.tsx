@@ -29,7 +29,7 @@ if (pattern && nameInput) {
 
   LocalStorage.setItem('savedPatterns', [...savedPatterns, {name : nameInput, grid : pattern}])
   setNameInput('');
-  setPattern(null)
+  setPattern(null);
 }
 }
 

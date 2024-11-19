@@ -15,6 +15,11 @@ padding: 0.5rem;
 overflow: hidden;
 }
 
+.canvas {
+  max-height: 5rem;
+  max-width: 100%;
+}
+
 .savedPatternItem:hover {
   scale :1.05
 
