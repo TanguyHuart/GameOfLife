@@ -1,0 +1,38 @@
+.musicFlyingButton {
+  position: fixed;
+  background-color: black;
+  border-top: solid 2px white;
+  border-left: solid 2px white;
+  border-top-left-radius: 10px;
+  bottom: 0;
+  right: 0;
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+  box-shadow: -2px -2px 10px white;
+}
+
+.onOffMusicButton {
+  background-color: transparent;
+  border: none;
+}
+
+.fullScreenButton {
+  background-color: transparent;
+  border: none;
+}
+
+.onOffMusicImage {
+  filter: drop-shadow(0px 0px 4px white);
+transition: all 200ms ease-in-out;
+}
+
+.onOffMusicImage:hover {
+  filter: drop-shadow(0px 0px 3px #5cff35 );
+  scale : 1.1
+}
+
+.socialsIcons {
+  filter: drop-shadow(0px 0px 4px white);
+  transition: all 200ms ease-in-out;
+}

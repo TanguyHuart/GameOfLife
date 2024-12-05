@@ -1,0 +1,26 @@
+[
+  {
+    "id" : 1,
+    "gridBackgroundColor" : "black",
+    "cellColor" : "white",
+    "strokeGridColor" : "#3c3c3c"
+  },
+  {
+    "id" : 2,
+    "gridBackgroundColor" : "#00168b",
+    "cellColor" : "#e12dff",
+    "strokeGridColor" : "#0d00b9"
+  },
+  {
+    "id" : 3,
+    "gridBackgroundColor" : "black",
+    "cellColor" : "#5cff35",
+    "strokeGridColor" : "#3c3c3c"
+  },
+  {
+    "id" : 4,
+    "gridBackgroundColor" : "white",
+    "cellColor" : "black",
+    "strokeGridColor" : "#a9a9a9"
+  }
+]

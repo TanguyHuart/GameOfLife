@@ -8,6 +8,10 @@ import { createCanvasGrid } from "@/functions/CreateGride";
 import calculateVisibleCells from "@/functions/CalculateVisibleCells";
 import './CanvasGrid.css'
 import ConfirmSelectedPattern from "../ConfirmSelectedPattern/ConfirmSelectedPattern";
+import { socket } from "@/socket";
+
+
+
 
 function CanvasGrid() {
 
@@ -15,11 +19,13 @@ function CanvasGrid() {
   const rows = 200; // Nombre initial de lignes
   const cols = 200; // Nombre initial de colonnes
   const bufferZone = 10; // Distance avant d'étendre la grille
-  const dragBuffer = 10
+  const dragBuffer = 20
   // Etat pour les règes du jeu
   const { lifeIsKeptWithMax, lifeIsKeptWithMin, lifeIsCreatedWith, interval, isRunning } = useRulesContext();
   // État pour la grille et les décalages
-  const {grid, setGrid, offsetX, setOffsetX, offsetY, setOffsetY, showGrid, savedGrid, zoom, selectionMode, selectedSavePattern, setSelectedSavePattern} = useGridContext()
+  const {grid, setGrid, offsetX, setOffsetX, offsetY, setOffsetY, showGrid, savedGrid, zoom, selectionMode, selectedSavePattern, setSelectedSavePattern, gridBackgroundColor, cellColor, strokeGridColor} = useGridContext()
+
+ 
   const [cellSize, setCellSize] = useState(20);
   const [isDragging, setIsDragging] = useState(false);
   const [isMouseDown, setIsMouseDown] = useState(false)
@@ -39,6 +45,7 @@ const [cursorRectPosition, setCursorRectPosition] = useState<{x : number, y : nu
     const newGrid = grid.map(row => [...row]);
     newGrid[y][x] = grid[y][x] === 1 ? 0 : 1;
     setGrid(newGrid);
+    socket.emit('grid', newGrid)
   };
 
 const getRectPosition = (event : React.MouseEvent | React.TouchEvent) => {
@@ -93,6 +100,7 @@ const insertSavedPattern = (pattern:number[][], x: number, y: number) => {
     }
   }
   setGrid(newGrid);
+  socket.emit('grid', newGrid)
 }
 
   const nextGeneration = useCallback(() => {
@@ -167,6 +175,7 @@ const extendGrid = () => {
     setOffsetY(prevOffsetY => prevOffsetY - extendAmount * cellSize);
   }
     setGrid(newGrid);
+    // socket.emit('grid', newGrid)
 };
 
 
@@ -182,13 +191,15 @@ const handleCanvasClick = (e: React.MouseEvent | React.TouchEvent ) => {
 
   // Gestion du drag pour déplacer la grille
 const handleMouseDown = (e: React.MouseEvent ) => {
+
   if (e.button === 2) {
+    
     setIsMouseDown(true)
     setIsDragging(false);
     const {clientX , clientY} =  e;
     setStartDrag({ x: clientX, y: clientY });
   }
-  if (e.button === 0 && selectionMode ) {
+  if (e.buttons === 1 && selectionMode ) {
     setIsMouseDown(true)
     setStartSelectedArea(getRectPosition(e))
   }
@@ -209,20 +220,22 @@ const handleTouchStart = (e : React.TouchEvent) => {
 
 
 
-const handleMouseMove = (e: React.MouseEvent | React.TouchEvent) => {
+const handleMouseMove = (e: React.MouseEvent ) => {
 
 setCursorRectPosition(getRectPosition(e))
 
   if (!isMouseDown ) {
     return
   }
-  const {clientX , clientY} = 'touches' in e ? e.touches[0] : e;
+  const {clientX , clientY} = e;
   const deltaX = clientX - startDrag.x;
   const deltaY = clientY - startDrag.y;
 
-  if ( Math.abs(deltaX) > dragBuffer || Math.abs(deltaY) > dragBuffer) {    
+  if ( Math.abs(deltaX) > dragBuffer || Math.abs(deltaY) > dragBuffer) {     
     setIsDragging(true);
+    if ('button' in e && e.buttons !== 2) {     
     setSelectedSavePattern(null)
+  }
   }
 
   if ('button' in e && e.buttons !== 2) {
@@ -241,22 +254,48 @@ setCursorRectPosition(getRectPosition(e))
     }
   };
 
+
+  const handleTouchMove = ( e : React.TouchEvent) => {
+    const {clientX , clientY} =  e.touches[0];
+    const deltaX = clientX - startDrag.x;
+    const deltaY = clientY - startDrag.y;
+
+    if ( (Math.abs(deltaX) > dragBuffer || Math.abs(deltaY) > dragBuffer) && !selectionMode) {     
+      setIsDragging(true);
+  
+    }
+    if (selectionMode) {   
+      setEndSelectArea(getRectPosition(e))
+    }
+    if (isDragging) {
+      setStartDrag({ x: clientX, y: clientY });
+      setOffsetX(offsetX + deltaX);
+      setOffsetY(offsetY + deltaY);
+      extendGrid(); // Étendre la grille si on approche des bords
+    }
+  }
+
   const handleMouseUp = (e: React.MouseEvent ) => {
     setIsMouseDown(false)
 
     if (!isDragging && !selectionMode) {      
       handleCanvasClick(e)
     }
-    if (selectionMode && selectedSavePattern) {
+    if (selectionMode && selectedSavePattern && !isDragging) {
       setStartSelectedArea(null)
       setEndSelectArea(null)
       const {x, y} = getRectPosition(e)
-      insertSavedPattern(selectedSavePattern.grid, x, y  )
+      insertSavedPattern(selectedSavePattern.grid, x - Math.round(selectedSavePattern.grid.length / 2-0.1), y - Math.round(selectedSavePattern.grid[0].length / 2-0.1)  )
     }
     if (selectionMode && startSelectArea && endSelectArea) {
       saveSelection()      
     }
-    setIsDragging(false);
+    if (isDragging) {
+      setIsDragging(false);
+      setStartSelectedArea(null)
+      setEndSelectArea(null)
+    }
+   
   };
 
   const handleTouchEnd = (e : React.TouchEvent) => {
@@ -265,10 +304,15 @@ setCursorRectPosition(getRectPosition(e))
     if (!isDragging && !selectionMode) {      
       handleCanvasClick(e)
     }
-    if ( selectionMode) {
+    if ( selectionMode && !isDragging) {
       saveSelection()
     }
-    setIsDragging(false)
+    if (isDragging) 
+    {
+      setIsDragging(false)
+
+    }
+    
   }
 
 
@@ -327,11 +371,17 @@ setCursorRectPosition(getRectPosition(e))
           const y = i * cellSize + offsetY;
         
           if (grid[i][j] === 1) {
-            ctx.fillStyle = "white"
+            ctx.save()
+            ctx.shadowColor = cellColor; // Couleur de l'ombre (vert néon)
+            ctx.shadowBlur = 20;                     // Intensité du flou
+            ctx.shadowOffsetX = 0;                   // Décalage horizontal
+            ctx.shadowOffsetY = 0;                   // Décalage vertical
+            ctx.fillStyle = cellColor
             ctx.fillRect(x, y, cellSize, cellSize);
+            ctx.restore()
           }
           else if(showGrid && cellSize > 10) {
-            ctx.strokeStyle =  'rgb(61, 61, 61)'; 
+            ctx.strokeStyle =  strokeGridColor; 
             ctx.strokeRect(x, y, cellSize, cellSize); // Contour de la cellule
           }
         }
@@ -340,8 +390,15 @@ setCursorRectPosition(getRectPosition(e))
       if (cursorRectPosition) {  
         const x = cursorRectPosition.x * cellSize + offsetX;
         const y = cursorRectPosition.y * cellSize + offsetY;
-        ctx.strokeStyle = "white"
+        ctx.save()
+        ctx.shadowColor = cellColor; // Couleur de l'ombre (vert néon)
+        ctx.shadowBlur = 15;                     // Intensité du flou
+        ctx.shadowOffsetX = 0;                   // Décalage horizontal
+        ctx.shadowOffsetY = 0;  
+        ctx.strokeStyle = cellColor
+        ctx.lineWidth = 3;
         ctx.strokeRect(x, y, cellSize, cellSize)
+        ctx.restore()  
       }
 
       if (startSelectArea && endSelectArea && selectionMode) {
@@ -349,13 +406,19 @@ setCursorRectPosition(getRectPosition(e))
         const y = startSelectArea.y * cellSize + offsetY;
         const width = (endSelectArea.x - startSelectArea.x + 1) * cellSize;
         const height = (endSelectArea.y - startSelectArea.y + 1) * cellSize;
+        ctx.save()
+        ctx.shadowColor = "red"; // Couleur de l'ombre (vert néon)
+        ctx.shadowBlur = 15;                     // Intensité du flou
+        ctx.shadowOffsetX = 0;                   // Décalage horizontal
+        ctx.shadowOffsetY = 0;  
+        ctx.lineWidth = 3;
         ctx.strokeStyle = "red";
-        ctx.lineWidth = 2;
         ctx.strokeRect(x, y, width, height);
+        ctx.restore()
       }
     };
     drawGrid ()
-  }, [grid, offsetX, offsetY, showGrid, cellSize, startSelectArea, endSelectArea, cursorRectPosition]);
+  }, [grid, offsetX, offsetY, showGrid, cellSize, startSelectArea, endSelectArea, cursorRectPosition, cellColor, gridBackgroundColor, strokeGridColor]);
 
   useEffect(() => { 
     const handleZoom = (zoom : number) => {
@@ -375,19 +438,19 @@ setCursorRectPosition(getRectPosition(e))
     }
     handleZoom(zoom)
   }, [zoom, setOffsetX, setOffsetY, cellSize ])
-
+  
   return (
     <>
     <canvas
       ref={canvasRef}
       width={canvasDimensions.width} // Dimensions du canvas
       height={canvasDimensions.height} // Dimensions du canvas
-      style={{ backgroundColor : "black", cursor: isDragging ? "grabbing" : "none" }}
+      style={{ backgroundColor : gridBackgroundColor, cursor: isDragging ? "grabbing" : "none" }}
       onContextMenu={(e) => e.preventDefault()}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
       onMouseMove={handleMouseMove}
-      onTouchMove={handleMouseMove}
+      onTouchMove={handleTouchMove}
       onMouseUp={handleMouseUp}
       onTouchEnd={handleTouchEnd}
       onMouseLeave={()=> setCursorRectPosition(null)}

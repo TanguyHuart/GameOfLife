@@ -1,0 +1,117 @@
+@keyframes opacityEntrance {
+	0% {
+		opacity: 0;
+
+	}
+  30%{
+    opacity: 0;
+  }
+  100% {
+		opacity: 1;
+	}
+}
+
+
+.home-page {
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  align-items: center;
+  justify-content: flex-start;
+  letter-spacing: 10px;
+}
+
+.opacityEntrance {
+
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: opacityEntrance 5s ease 0s 1 normal forwards;
+}
+
+.musicButtonContainer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  padding: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.onOffMusicButton {
+  background-color: transparent;
+  border: none;
+}
+
+.fullScreenButton {
+  background-color: transparent;
+  border: none;
+}
+
+.onOffMusicImage {
+  filter: drop-shadow(0px 0px 4px white);
+transition: all 200ms ease-in-out;
+}
+
+.onOffMusicImage:hover {
+  filter: drop-shadow(0px 0px 3px #5cff35 );
+  scale : 1.1
+}
+
+.socials_container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  padding: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.socialsIcons {
+  filter: drop-shadow(0px 0px 4px white);
+  transition: all 200ms ease-in-out;
+}
+
+.socialsIconsYsT {
+  filter: drop-shadow(0px 0px 5px rgba(255, 255, 255, 0.363));
+  transition: all 200ms ease-in-out;
+}
+
+.socialsIconsYsT:hover {
+  filter: drop-shadow(0px 0px 3px #5cff35 );
+  scale : 1.1
+}
+
+.socialsIcons:hover {
+  filter: drop-shadow(0px 0px 3px #5cff35 );
+  scale : 1.1
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+@media screen and (min-width : 768px) {
+  .home-page {
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 10px;
+  }
+  
+}

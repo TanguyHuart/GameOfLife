@@ -6,19 +6,19 @@
   height: 100vh;
   z-index: 10;
   display: flex;
-
 }
 
 .menu {
-  background-color: rgb(54, 54, 54);
+  background-color: rgb(0, 0, 0);
   padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  align-items: flex-start;
+  align-items: center;
   overflow-y: auto;
-  scrollbar-width: thin;
-
+  scrollbar-width: none;
+  border-right: solid 2px white;
+ box-shadow: 2px 0px 10px white;
 }
 
 .menu_section{
@@ -27,6 +27,9 @@
   align-items: center;
   gap: 1rem;
 width: 100%;
+padding: 0 1rem;
+
+
 }
 
 .menu_section_models_list {
@@ -36,14 +39,23 @@ width: 100%;
   gap: 1rem;
 }
 
+.menu_section_colors_container {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  
+}
+
+
+
 .zoom_input_container {
-  position: fixed;
-  width: 60%;
-  bottom: 20px;
-  right: 10px;
+
+  width: 100%;
   color: white;
   display: flex;
   align-items: flex-end;
+  justify-content: space-evenly;
   font-size: 1.1rem;
   gap: 1rem;
 }
@@ -62,22 +74,22 @@ width: 100%;
 
 }
 
-
-
 @media screen and (min-width : 768px) {
   .menu_mobile_buttons {
     display: none;
-  } 
-  
+  }   
 }
-
-
 
 .menu_title {
   padding: 0.5rem;
   margin-bottom: 1rem;
   color: white;
+  filter: drop-shadow(0px 0px 3px rgb(255, 255, 255));
   max-width: 100%;
+  font-family: var(--font-pixel-sans);
+  text-transform: uppercase;
+  font-size: 3rem;
+  font-weight: 400;
 }
 
 .menu_board {
@@ -97,14 +109,44 @@ width: 100%;
 .menu_section_title {
   color: white;
   text-transform: uppercase;
-  font-size: 1.3rem;
+  font-size: 2rem;
+  font-family: var(--font-pixel-sans);
+  filter: drop-shadow(0px 0px 3px rgb(255, 255, 255));
+  font-weight: 400;
+  transition: all 300ms ease-in-out;
 }
 
+.menu_section_title:hover {
+  background-color: white;
+  color: black;
+  cursor: pointer;
+}
+
+
+
 .options_items {
+  font-size: 1rem;
   color: white;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.options_items_grid {
+
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.options_labels {
+  font-family: var(--font-pixel-sans);
+  color: white;
+  font-size: 1.5rem;
+}
+
+.options_icons {
+  filter: drop-shadow(0px 0px 3px white);
 }
 
 .items_slider {
@@ -113,19 +155,27 @@ width: 100%;
 }
 
 .items_input {
+  font-size: 1rem;
   padding: 0.5rem;
   width: 5rem;
+  background-color: transparent;
+  color: white;
+  border: solid 2px white ;
+  font-family: var(--font-pixel-sans);
+  border-radius: 10px;
 }
 
 .board_buttons {
   display: flex;
   gap: 1rem;
   align-items: center;
+  width: 100%;
+  justify-content: space-evenly;
 }
 
 .mode_button_container {
  display: inline-flex;
- border: 1px solid lightgray;
+ border:  solid 2px rgb(255, 255, 255);
  border-radius: 10px;
  overflow: hidden;
 
@@ -133,69 +183,120 @@ width: 100%;
 }
 
 .mode_button {
-padding: 0.5rem 1rem;
+font-size: 1.5rem;
+padding: 1rem 1rem;
 transition: all 200ms ease-in-out;
-color: dimgray;
-background-color: lightgray;
+color: white;
+font-family: var(--font-pixel-sans);
+background-color: transparent;
 border: none;
 }
 
 .mode_button:hover {
-  color: darkblue;
+  color: #5cff35;
+  cursor: pointer;
 }
 
 
  .selected {
-  background-color: royalblue;
-  color: white;
+  background-color: #5cff35;
+  color: black;
+}
+
+.selected:hover {
+  color: black;
+  cursor: pointer;
 }
 
 .hideGrid_button {
+  font-size: 1.5rem;
+  text-transform: uppercase;
   padding: 1rem 0.5rem;
-  border: 1px solid grey;
+  border: 2px solid white;
+  font-family: var(--font-pixel-sans);
   border-radius: 10px;
+  background-color: transparent;
+  color: white;
+  transition: all 200ms ease-in-out;
+  filter: drop-shadow(0px 0px 3px white);
+}
+
+.hideGrid_button:hover {
+  background-color: #ffffff;
+  color: black;
+  cursor: pointer;
 }
 
 .run_button {
+  font-size: 1.5rem;
   padding: 1rem;
-  background-color: green;
-  color: white;
-  border: 1px solid darkgreen;
+  background-color: transparent;
+  font-family: var(--font-pixel-sans);
+  color: #5cff35;
+  border: 2px solid #5cff35;
   border-radius: 10px;
   transition: all 200ms ease-in-out;
+  filter: drop-shadow(0px 0px 3px #5cff35);
 }
 
 .run_button:hover {
-  background-color: darkgreen;
+  background-color: #5cff35;
+  color: black;
+  cursor: pointer;
 }
 
 .reset_button {
+  font-size: 1.5rem;
   padding: 1rem;
-  background-color: red;
-  color: white;
-  border: 1px solid darkred;
+  background-color: transparent;
+  font-family: var(--font-pixel-sans);
+  color: rgb(230, 41, 255);
+  border: 2px solid rgb(230, 41, 255);
   border-radius: 10px;
   transition: all 200ms ease-in-out;
+  filter: drop-shadow(0px 0px 3px rgb(230, 41, 255));
 }
 
 .reset_button:hover {
-  background-color: darkred;
+  background-color: rgb(230, 41, 255);
+  color: black;
+  cursor: pointer;
 }
 
 .clear_button {
+  font-size: 1.5rem;
   padding: 1rem;
-  background-color: rgb(255, 255, 255);
-  color: rgb(0, 0, 0);
-  border: 1px solid rgb(97, 97, 97);
+  background-color: transparent;
+  font-family: var(--font-pixel-sans);
+  color: white;
+  border: 2px solid rgb(255, 255, 255);
   border-radius: 10px;
   transition: all 200ms ease-in-out;
+  filter: drop-shadow(0px 0px 3px rgb(255, 255, 255));
 }
 
 .clear_button:hover {
-  background-color: rgb(97, 97, 97);
+  background-color: rgb(255, 255, 255);
+  color: black;
+  cursor: pointer;
 }
 
-@media screen and (max-width : 768px ) {
+.socketInputField {
+  font-size: 1.1rem;
+  color: #5cff35;
+  font-family: var(--font-pixel-sans);
+  background-color: transparent;
+  border: none;
+  border-bottom: solid 2px white;
+}
+.isConnected {
+  color: #5cff35;
+}
+.notConnected {
+  color: #e629ff;
+}
+
+@media screen and (max-width : 1024px ) {
   
   .menu_container {
 width: 80vw;
@@ -204,10 +305,25 @@ transition: transform 200ms ease-in-out;
 
   }
 
+  .menu {
+    border-right: solid 2px white;
+    box-shadow: none;
+  }
+
+  .menu_section {
+    padding: 0;
+  } 
+
+  .menu_section_models_list {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
   .hidden {
 transform: translateX(-100%);
   }
-
 
 
 
@@ -215,27 +331,50 @@ transform: translateX(-100%);
  position: absolute;
  top: 0;
  right: -25%;
-    background-color: rgb(54, 54, 54);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    gap: 0.2rem;
     color: black;
     width: 25%;
     height: 10%;
     
-
   }
 
   .mobile_run_button {
     width: 100%;
-    background-color: green;
+    color: #5cff35;
+    background-color: black;
+    border: solid 2px #5cff35;
+    border-radius: 10px;
     min-height: 50px;
+    
   }
 
+  
+
   .mobile_menu_button {
+    background-color: black;
+    border: none;
+    border-radius: 10px;
     width: 100%;
     min-height: 50px;
   }
   .mobile_reset_button {
     width: 100%;
-    background-color: red;
+    color: #e629ff;
+    border: solid 2px #e629ff;
+    border-radius: 10px;
+    background-color: black;
+    min-height: 50px;
+  }
+
+  .mobile_clear_button {
+    width: 100%;
+    color: white;
+    border: solid 2px white;
+    border-radius: 10px;
+    background-color: black;
     min-height: 50px;
   }
 
