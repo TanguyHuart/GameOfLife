@@ -111,7 +111,7 @@ const handleButton = () => {
 <>
   <div className={`menu_container ${menuisOpen ? '' : 'hidden'}`}>    
     <nav className='menu'>
-      <h1 className='menu_title'>GAME OF LIFE</h1>
+      <h1 className='menu_title'>GLOWTOPIA</h1>
       <div className='menu_section'>
         <div className='board_buttons'>
           <button type='button' className='run_button' onClick={ handleClickRun}>

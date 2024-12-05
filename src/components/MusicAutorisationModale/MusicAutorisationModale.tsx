@@ -33,7 +33,7 @@ function MusicAutorisationModale({setIsReady} : MusicAutorisationModaleProps) {
       <div className="splash-screen">
       
         <p className="splash-screen__info">
-        For an immersive experience, the game starts with background music that plays automatically and fullscreen display. If you prefer to play without sound or recover your favorite browser no worries! You can disable these feature anytime using the associated buttons. 
+        For an immersive experience, the game starts with background music that plays automatically and fullscreen display. If you prefer to play without sound or recover your favorite browser, no worries! You can disable theses features anytime using the associated buttons. 
         
         <br /> Have fun exploring and enjoy the game! 
         </p>
