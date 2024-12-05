@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useGridContext } from "@/context/GridContext";
 import { useRulesContext } from "@/context/RulesContext";
 import { useSocketContext } from "@/context/SocketContext";

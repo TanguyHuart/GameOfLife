@@ -13,6 +13,7 @@ import { useSocketContext } from '@/context/SocketContext';
 import { socket } from '@/socket';
 import Image from 'next/image';
 import ColorsPicker from '../ColorsPicker/ColorsPicker';
+import { clearCanvasGrid, createCanvasGrid } from '@/functions/CreateGride';
 
 function Menu() {
 
@@ -30,14 +31,15 @@ const {
   
 } = useRulesContext()
 
-const { showGrid,grid,savedGrid, setShowGrid, setSavedGrid, zoom, setZoom,selectionMode, setSelectionMode, setCellColor, setGridBackgroundColor, setStrokeGridColor} = useGridContext()
+const { showGrid,grid,savedGrid, setShowGrid, setSavedGrid, zoom, setZoom,selectionMode, setSelectionMode, setCellColor, setGridBackgroundColor, setStrokeGridColor, setOffsetX, setOffsetY, setGrid} = useGridContext()
 const { isConnected,  setRoomName } = useSocketContext()
 const [menuisOpen, setMenuIsOpen] =useState(false)
 const [savedPatterns,  setSavedPatterns] = useState<TPattern[]>([])
 const colorArray : TColorPicker[] = ColorArray
 const [socketRoomInput , setSocketRoomInput] = useState('')
 const [visbleSection , setVisibleSection] = useState('')
-
+const rows = 200;
+const cols = 200;
 
 
 const handleSectionClick = (sectioName : string) => {
@@ -49,17 +51,34 @@ const handleClickRun = async () => {
   if (!isRunning) {        
     setSavedGrid(grid) 
   }
+  if (isConnected) {
   socket.emit('runButton', !isRunning)
+}
   setIsRunning(!isRunning)
  
 }
 
 const handleClickReset = () => {
+  if (isConnected) {
   socket.emit('resetButton', savedGrid)
+} else {
+  setOffsetX(-50);
+  setOffsetY(-50);        
+  setGrid(createCanvasGrid(rows, cols, savedGrid)); 
+  setIsRunning(false)
+}
 }
 
 const handleClickClear = () => {
-  socket.emit('clearButton')
+  if (isConnected) {
+    socket.emit('clearButton')
+  }
+  else {
+    setOffsetX(-50)
+    setOffsetY(-50);
+    setGrid(clearCanvasGrid(rows, cols))
+  }
+
 }
 
 const handleChangeInterval = (event : ChangeEvent<HTMLInputElement> ) => {
