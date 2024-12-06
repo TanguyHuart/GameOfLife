@@ -1,6 +1,7 @@
 'use client'
 
 import CanvasGrid from "@/components/CanvasGrid/CanvasGrid";
+import InformationModale from "@/components/InformationModale/InformationModale";
 import Menu from "@/components/Menu/Menu";
 import MusicFlyingButton from "@/components/MusicFlyingButton/MusicFlyingButton";
 import SocketConnexion from "@/components/SocketConnexion/SocketConnexion";
@@ -22,6 +23,7 @@ function SandBoxPage() {
           <Menu /> 
           <CanvasGrid />
           <MusicFlyingButton />
+          <InformationModale />
         </GridProvider>
       </RulesProvider>
     </SocketProvider>

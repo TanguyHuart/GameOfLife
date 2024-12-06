@@ -12,7 +12,7 @@ import { useEffect } from "react";
 
 function SocketConnexion() {
 
-  const { setIsConnected,  setTransport, setRoomName, roomName } = useSocketContext();
+  const { setIsConnected,  setTransport, setRoomName, roomName, setInformationPopUp } = useSocketContext();
   const  {grid,  setGrid, setOffsetX, setOffsetY} = useGridContext();
   const {setIsRunning, setInterval} = useRulesContext()
   const rows = 200;
@@ -76,10 +76,11 @@ function SocketConnexion() {
 
 
     useEffect(() => {
-      console.log(roomName);
       socket.emit('join-room', roomName )
       socket.on("room-joined", (roomId) => {
+        setInformationPopUp("Socket Connexion succed")
         if (roomId === roomName && socket.id === roomName) {
+          
           // Si ce client est l'hôte, émettez la grille
           socket.emit('grid', grid);
         }
@@ -87,9 +88,12 @@ function SocketConnexion() {
       });
       socket.on('request-grid', ({targetSocketId}) => {
         console.log(`Demande de grille reçue pour le client ${targetSocketId}`);
+        setInformationPopUp("Socket Connexion succed")
         socket.emit('provide-grid', { targetSocketId, grid });
       });
       socket.on("error-joining-room", (message) => {
+
+        setInformationPopUp("Socket Connexion failed")
         console.error(message)})
         return () => {
           socket.off('room-joined')

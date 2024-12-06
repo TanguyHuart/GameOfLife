@@ -12,6 +12,8 @@ shareGrid : number[][],
 setShareGrid : React.Dispatch<React.SetStateAction<number[][]>>,
 roomName : string | undefined,
 setRoomName : React.Dispatch<React.SetStateAction<string | undefined >>,
+informationPopUp : string | null,
+setInformationPopUp : React.Dispatch<React.SetStateAction<string | null >>
 }
 
 
@@ -26,13 +28,14 @@ export const SocketProvider = ({ children }: Readonly<{
 
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [transport, setTransport] = useState<string>("N/A");
-  const [shareGrid, setShareGrid] = useState<number[][]>([])
-  const [roomName, setRoomName] = useState<string | undefined>()
+  const [shareGrid, setShareGrid] = useState<number[][]>([]);
+  const [roomName, setRoomName] = useState<string | undefined>();
+  const [informationPopUp, setInformationPopUp] = useState<string|null>(null);
   
 
   return (
 
-    <SocketContext.Provider value={{shareGrid, setShareGrid, isConnected, setIsConnected, transport, setTransport, roomName, setRoomName}} >
+    <SocketContext.Provider value={{shareGrid, setShareGrid, isConnected, setIsConnected, transport, setTransport, roomName, setRoomName, informationPopUp, setInformationPopUp}} >
       {children}
     </SocketContext.Provider>
 

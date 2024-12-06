@@ -25,7 +25,7 @@
   letter-spacing: 0px;
   max-height: 30rem;
   overflow: auto;
-  text-align: justify;
+  text-align: center;
 }
 
 .splash-screen__button {
@@ -67,6 +67,7 @@
     max-height: none;
     overflow: auto;
     min-width: 30rem;
+    text-align: justify;
   }
   
 }

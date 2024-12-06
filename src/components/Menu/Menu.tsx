@@ -107,6 +107,7 @@ useEffect(() => {
 const handleButton = () => {
   setRoomName(socketRoomInput)
   }
+  
   return (
 <>
   <div className={`menu_container ${menuisOpen ? '' : 'hidden'}`}>    
