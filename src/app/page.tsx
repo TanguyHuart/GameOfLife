@@ -71,7 +71,7 @@ else {
       <div className='musicButtonContainer'>
           <button className='onOffMusicButton' type="button" onClick={() => setMusicIsOn(!musicIsOn)}>
              { musicIsOn ? 
-             <Image className='onOffMusicImage' width= {50} height={50} src={'/icons/musiqueoff.png'} alt='musicOffIcon' /> : <Image className='onOffMusicImage' src={'/icons/musiqueon.png'} width={50} height={50} alt='musicOnIcon' />}
+             <Image className='onOffMusicImage' width= {50} height={50} src={'/icons/musiqueon.png'} alt='musicOffIcon' /> : <Image className='onOffMusicImage' src={'/icons/musiqueoff.png'} width={50} height={50} alt='musicOffIcon' />}
           </button> 
           
             <button onClick={handleClickFullScreenButton} className='fullScreenButton'>

@@ -3,7 +3,7 @@
   top: 0;
   left: 0;
   width: 30rem;
-  height: 100vh;
+  height: 100dvh;
   z-index: 10;
   display: flex;
 }
@@ -19,9 +19,11 @@
   scrollbar-width: none;
   border-right: solid 2px white;
  box-shadow: 2px 0px 10px white;
+ width: 100%;
 }
 
 .menu_section{
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -54,16 +56,17 @@ padding: 0 1rem;
   width: 100%;
   color: white;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-evenly;
   font-size: 1.1rem;
   gap: 1rem;
 }
 
 .zoom_input {
-  width: 100%;
+  width: 90%;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .zoom_input_symbol {
@@ -71,6 +74,7 @@ padding: 0 1rem;
   justify-content: space-between ;
   font-size: 1.5rem;
   font-weight: bold;
+  width: 100%;
 
 }
 
@@ -129,6 +133,7 @@ padding: 0 1rem;
   color: white;
   display: flex;
   flex-direction: column;
+  
   gap: 0.5rem;
 }
 
@@ -143,7 +148,56 @@ padding: 0 1rem;
   font-family: var(--font-pixel-sans);
   color: white;
   font-size: 1.5rem;
+
 }
+
+.roomID_container {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 1rem;
+  
+}
+
+.options_labels_roomID {
+  display: inline-block;
+  max-width: 80%; /* Empêche de dépasser la largeur parent */
+  white-space: nowrap; /* Empêche le retour à la ligne */
+  overflow: hidden; /* Masque le texte dépassant */
+  text-overflow: ellipsis; /* Ajoute des points de suspension */
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  font-family: var(--font-pixel-sans);
+  text-align: start;
+}
+
+
+
+.roomID_input{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.roomID_copyButton {
+  cursor: pointer;
+  border: solid 2px white;
+  filter: drop-shadow(0px 0px 3px rgb(255, 255, 255));
+  transition: all 300ms ease-in-out;
+  border-radius: 10px;
+  padding: 0.5rem;
+}
+
+.roomID_copyButton:hover {
+  cursor: pointer;
+  border: solid 2px #5cff35;
+  filter: drop-shadow(0px 0px 3px #5cff35);
+  
+}
+
+
 
 .options_icons {
   filter: drop-shadow(0px 0px 3px white);
@@ -151,8 +205,17 @@ padding: 0 1rem;
 
 .items_slider {
 
-  width: 100%;
+  width: 80%;
+  filter: drop-shadow(0px 0px 3px #5cff35);
+  margin-bottom: 10px;
+  
 }
+
+.items_slider.zoom {
+ width: 78%;
+}
+
+
 
 .items_input {
   font-size: 1rem;
@@ -288,6 +351,7 @@ border: none;
   background-color: transparent;
   border: none;
   border-bottom: solid 2px white;
+  width: 80%;
 }
 .isConnected {
   color: #5cff35;
@@ -380,5 +444,10 @@ transform: translateX(-100%);
 
   .board_buttons {
     display: none;
+  }
+
+  .socketInputField {
+
+    width: 70%;
   }
 }

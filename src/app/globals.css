@@ -38,6 +38,51 @@ a {
   text-decoration: none;
 }
 
+button {
+  background-color: transparent;
+  border: none;
+}
+
+input[type="range"] {
+  appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Supprime le style par défaut */
+  background: #5cff35;
+  height: 30px;
+  width: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin-top: -14px; /* Aligne le curseur sur la piste */
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+ background-color: white;
+ height: 2px; 
+ border-radius: 10px;
+ 
+}
+
+input[type="range"]::-moz-range-track {
+  background-color: white;
+  height: 2px; 
+  border-radius: 10px;
+}
+
+input[type="range"]::-moz-range-thumb {
+  appearance: none;
+  -webkit-appearance: none; /* Supprime le style par défaut */
+  background: #5cff35;
+  height: 30px;
+  width: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin-top: -14px; /* Aligne le curseur sur la piste */
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;

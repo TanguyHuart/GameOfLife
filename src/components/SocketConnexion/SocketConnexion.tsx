@@ -29,7 +29,9 @@ function SocketConnexion() {
     function onConnect() {
       setIsConnected(true);
       setTransport(socket.io.engine.transport.name);
-      setRoomName(socket.id)
+      socket.on("room-name", (currentRoom) => {
+        setRoomName(currentRoom); // Définir le nom de la room avec currentRoom
+      });
       socket.io.engine.on("upgrade", (transport) => {
         setTransport(transport.name); 
       });
@@ -66,6 +68,7 @@ function SocketConnexion() {
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
+      socket.off('room-name');
       socket.off('responseGrid');
       socket.off('responseRun');
       socket.off('responseReset');

@@ -43,7 +43,7 @@ enterFullScreen()
     <div className='musicFlyingButton'>
     <button className='onOffMusicButton' type="button" onClick={() => setMusicIsOn(!musicIsOn)}>
        { musicIsOn ? 
-       <Image className='onOffMusicImage' width= {30} height={30} src={'/icons/musiqueoff.png'} alt='musicOffIcon' /> : <Image className='onOffMusicImage' src={'/icons/musiqueon.png'} width={30} height={30} alt='musicOnIcon' />}
+       <Image className='onOffMusicImage' width= {30} height={30} src={'/icons/musiqueon.png'} alt='musicOnIcon' /> : <Image className='onOffMusicImage' src={'/icons/musiqueoff.png'} width={30} height={30} alt='musicOffIcon' />}
     </button> 
     
       <button onClick={handleClickFullScreenButton} className='fullScreenButton'>

@@ -15,6 +15,7 @@ import Image from 'next/image';
 import ColorsPicker from '../ColorsPicker/ColorsPicker';
 import { clearCanvasGrid, createCanvasGrid } from '@/functions/CreateGride';
 
+
 function Menu() {
 
 const {
@@ -32,7 +33,7 @@ const {
 } = useRulesContext()
 
 const { showGrid,grid,savedGrid, setShowGrid, setSavedGrid, zoom, setZoom,selectionMode, setSelectionMode, setCellColor, setGridBackgroundColor, setStrokeGridColor, setOffsetX, setOffsetY, setGrid} = useGridContext()
-const { isConnected,  setRoomName } = useSocketContext()
+const { isConnected,roomName,  setRoomName, setInformationPopUp } = useSocketContext()
 const [menuisOpen, setMenuIsOpen] =useState(false)
 const [savedPatterns,  setSavedPatterns] = useState<TPattern[]>([])
 const colorArray : TColorPicker[] = ColorArray
@@ -107,6 +108,18 @@ useEffect(() => {
 const handleButton = () => {
   setRoomName(socketRoomInput)
   }
+
+  const handleCopyRoom = () => {
+    if (roomName) {
+    navigator.clipboard.writeText(roomName)
+    .then(() => {
+      setInformationPopUp("RoomID clipped")
+    })
+    .catch(err => {
+      console.error('Erreur lors de la copie dans le presse-papier :', err);
+    });
+  }
+  }
   
   return (
 <>
@@ -130,8 +143,8 @@ const handleButton = () => {
             <label className='options_labels' htmlFor="interval">Speed</label>
             <div className="zoom_input">
               <div className="zoom_input_symbol">
-                <p>-</p>
                 <p>+</p>
+                <p>-</p>
               </div>
             <input className='items_slider' type="range" min={0.0001} max={500} placeholder='500' id="interval" value={interval} onChange={handleChangeInterval} />
             </div>
@@ -140,10 +153,10 @@ const handleButton = () => {
             <label className='options_labels' htmlFor="zoom_input">Zoom</label>
             <div className="zoom_input">
               <div className="zoom_input_symbol">
-                <p>-</p>
+                <p >-</p>
                 <p>+</p>
               </div>
-              <input id="zoom_input" className="zoom_input" type="range" min={0.98} max={1.3} step="any" placeholder="1.1" value={zoom} onChange={(e) => setZoom(parseFloat(e.target.value))}/>
+              <input id="zoom_input" className="items_slider zoom" type="range" min={0.98} max={1.3} step="any" placeholder="1.1" value={zoom} onChange={(e) => setZoom(parseFloat(e.target.value))}/>
             </div>
           </div>
         <div className='options_items_grid'>
@@ -204,7 +217,14 @@ const handleButton = () => {
         <h2 onClick={() => handleSectionClick('share')} className='menu_section_title'> SHARE </h2>
       {visbleSection === 'share' && (<>
       <p className='options_labels'>Status: <span className={`${isConnected ? "isConnected" :" notConnected"} `}>{ isConnected ? "connected" : "disconnected" }</span></p>
-      <p className='options_labels'>My ID : {socket.id}</p>
+      <div className='roomID_container'>
+        <label className='options_labels'>My Room ID :</label> 
+        <div className='roomID_input'>
+          <input className='options_labels_roomID' readOnly value={roomName} />
+          <button className='roomID_copyButton' onClick={handleCopyRoom} type="button"><Image width={20} height={20} src={"/icons/copy.png"} alt="copy icon"  /></button>
+          
+        </div>
+      </div>
       <div className='zoom_input_container'>
         <label className='options_labels' htmlFor="socketInput">Friend Room :</label>
       <input id='socketInput' className='socketInputField' type="text" onChange={(e) => setSocketRoomInput(e.currentTarget.value)} value={socketRoomInput} />

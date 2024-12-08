@@ -1,7 +1,7 @@
 import { createServer } from "node:http";
 import next from "next";
 import { Server } from "socket.io";
-
+import bcrypt from "bcrypt"
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = process.env.HOST || 'localhost';
@@ -15,11 +15,13 @@ app.prepare().then(() => {
 
   const io = new Server(httpServer);
 
-  io.on("connection", (socket) => {
+  io.on("connection", async (socket) => {
     console.log('connecté au socket !', socket.id);
-    socket.currentRoom = socket.id
+    socket.currentRoom = await bcrypt.hash(socket.id , 10)
+    console.log(socket.currentRoom);
+    
 socket.join(socket.currentRoom)
-
+socket.emit("room-name", socket.currentRoom);
 socket.on ('join-room', (roomId) => {
   console.log('tu veux te connecter a la room :' + roomId);
 
@@ -34,7 +36,7 @@ if (io.sockets.adapter.rooms.get(roomId)) {
         const clients = Array.from(io.sockets.adapter.rooms.get(roomId) || []);
         const hostSocketId = clients[0]; // Le premier client est considéré comme "host"
 
-        if (hostSocketId && hostSocketId !== socket.id) {
+        if (hostSocketId && hostSocketId !== socket.currentRoom) {
           // Demander la grille à l'hôte
           io.to(hostSocketId).emit('request-grid', { targetSocketId: socket.id });
         }
