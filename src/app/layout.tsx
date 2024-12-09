@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import ClientOnlyWrapper from "@/context/ClientOnlyWrapper";
 import { MusicProvider } from "@/context/MusicContext";
+import Head from "next/head";
 
 
 const geistSans = localFont({
@@ -38,7 +39,11 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-  
+      <Head>
+        <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-icon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon.ico" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon.ico" />  
+      </Head>
             <body className={`${geistSans.variable} ${geistMono.variable} ${pixelFont.variable}`}>
               <ClientOnlyWrapper>
                 <MusicProvider>
