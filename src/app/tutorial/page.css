@@ -1,0 +1,17 @@
+.tutorial_page {
+  background-color: black;
+  width: 100dvw;
+  height: 100dvh;
+  justify-items: center;
+}
+
+.tutorial_page__pixel {
+  width: 100%;
+  height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+

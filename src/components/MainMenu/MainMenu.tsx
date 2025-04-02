@@ -6,9 +6,9 @@ function MainMenu() {
   return (
     <div className="main-menu">
        <GameTitle />
-        <div className="menu-button-container">
+        <Link href={'/tutorial'} className="menu-button-container">
           <button className="menu-button" type="button">Tutoriel <br /> (in progress) </button>
-        </div>
+        </Link>
       
         <Link className="menu-button-container" href={'/sandbox'}>
           <button className="menu-button" type="button">SandBox</button>

@@ -10,11 +10,15 @@ import calculateVisibleCells from "@/functions/CalculateVisibleCells";
 import './CanvasGrid.css'
 import ConfirmSelectedPattern from "../ConfirmSelectedPattern/ConfirmSelectedPattern";
 import { socket } from "@/socket";
+import { useTutorialContext } from "@/context/TutorialContext";
 
 
+type CanvasGridProps = {
 
+  mode: "sandbox" | "tutorial" | "challenge" | "puzzle"; // Mode de jeu
+}
 
-function CanvasGrid() {
+function CanvasGrid({ mode} : CanvasGridProps) {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rows = 200; // Nombre initial de lignes
@@ -25,7 +29,7 @@ function CanvasGrid() {
   const { lifeIsKeptWithMax, lifeIsKeptWithMin, lifeIsCreatedWith, interval, isRunning } = useRulesContext();
   // État pour la grille et les décalages
   const {grid, setGrid, offsetX, setOffsetX, offsetY, setOffsetY, showGrid, savedGrid, zoom, selectionMode, selectedSavePattern, setSelectedSavePattern, gridBackgroundColor, cellColor, strokeGridColor} = useGridContext()
-
+const {allowDraging, allowSelection, isInteractive, trackEvent} = useTutorialContext()
  
   const [cellSize, setCellSize] = useState(20);
   const [isDragging, setIsDragging] = useState(false);
@@ -182,6 +186,7 @@ const extendGrid = () => {
 
   // Gestion du clic pour inverser l'état des cellules
 const handleCanvasClick = (e: React.MouseEvent | React.TouchEvent ) => {
+  if (!isInteractive) return;
   e.preventDefault()
   const x = getRectPosition(e).x
   const y = getRectPosition(e).y
@@ -193,6 +198,7 @@ const handleCanvasClick = (e: React.MouseEvent | React.TouchEvent ) => {
   // Gestion du drag pour déplacer la grille
 const handleMouseDown = (e: React.MouseEvent ) => {
 
+
   if (e.button === 2) {
     
     setIsMouseDown(true)
@@ -200,7 +206,7 @@ const handleMouseDown = (e: React.MouseEvent ) => {
     const {clientX , clientY} =  e;
     setStartDrag({ x: clientX, y: clientY });
   }
-  if (e.buttons === 1 && selectionMode ) {
+  if (e.buttons === 1 && selectionMode && !allowSelection ) {
     setIsMouseDown(true)
     setStartSelectedArea(getRectPosition(e))
   }
@@ -224,7 +230,7 @@ const handleTouchStart = (e : React.TouchEvent) => {
 const handleMouseMove = (e: React.MouseEvent ) => {
 
 setCursorRectPosition(getRectPosition(e))
-
+if (!allowDraging || !isMouseDown) return
   if (!isMouseDown ) {
     return
   }
@@ -252,11 +258,13 @@ setCursorRectPosition(getRectPosition(e))
       setOffsetX(offsetX + deltaX);
       setOffsetY(offsetY + deltaY);
       extendGrid(); // Étendre la grille si on approche des bords
+      if (mode === "tutorial") { trackEvent("GRID_MOVED", { deltaX, deltaY })}
     }
   };
 
 
   const handleTouchMove = ( e : React.TouchEvent) => {
+    if (!isInteractive) return;
     const {clientX , clientY} =  e.touches[0];
     const deltaX = clientX - startDrag.x;
     const deltaY = clientY - startDrag.y;
@@ -273,6 +281,7 @@ setCursorRectPosition(getRectPosition(e))
       setOffsetX(offsetX + deltaX);
       setOffsetY(offsetY + deltaY);
       extendGrid(); // Étendre la grille si on approche des bords
+      if (mode === "tutorial") { trackEvent("GRID_MOVED", { deltaX, deltaY })}
     }
   }
 

@@ -18,7 +18,6 @@ app.prepare().then(() => {
   io.on("connection", async (socket) => {
     console.log('connecté au socket !', socket.id);
     socket.currentRoom = await bcrypt.hash(socket.id , 10)
-    console.log(socket.currentRoom);
     
 socket.join(socket.currentRoom)
 socket.emit("room-name", socket.currentRoom);

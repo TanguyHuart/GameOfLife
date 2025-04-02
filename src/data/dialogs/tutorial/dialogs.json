@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "tutorialSteps": 1,
+    "dialogIndex": 0,
+    "speedText": 4,
+    "dialog": "............................",
+    "clickForNext" : true
+  },
+  {
+    "id": 2,
+    "tutorialSteps": 1,
+    "dialogIndex": 1,
+    "speedText": 3,
+    "dialog": "Hey !..... ",
+    "clickForNext" : true
+  },
+  {
+    "id": 3,
+    "tutorialSteps": 1,
+    "dialogIndex": 2,
+    "speedText": 3,
+    "dialog": "Hey................. </br> HEY !",
+    "clickForNext" : true
+  },
+  {
+    "id": 4,
+    "tutorialSteps": 1,
+    "dialogIndex": 3,
+    "speedText": 1,
+    "dialog": " HEEEEEEY !!!!",
+    "clickForNext" : true
+  },
+  {
+    "id": 5,
+    "tutorialSteps": 1,
+    "dialogIndex": 4,
+    "speedText": 3,
+    "dialog": "Over here ! </br> To the right ! </br> C'mon , Hold your right mouse button to move the grid  !",
+    "clickForNext" : false
+  }
+]

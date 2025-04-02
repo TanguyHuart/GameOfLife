@@ -21,7 +21,7 @@ function SandBoxPage() {
         <GridProvider>
           <SocketConnexion />
           <Menu /> 
-          <CanvasGrid />
+          <CanvasGrid mode="sandbox" />
           <MusicFlyingButton />
           <InformationModale />
         </GridProvider>

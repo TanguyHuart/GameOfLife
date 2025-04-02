@@ -403,43 +403,66 @@ transform: translateX(-100%);
     width: 25%;
     height: 10%;
     
+
+    
   }
 
   .mobile_run_button {
     width: 100%;
     color: #5cff35;
+    font-family: var(--font-pixel-sans);
+    text-transform: uppercase;
+    font-size: 1rem;
     background-color: black;
     border: solid 2px #5cff35;
-    border-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-left: none; 
     min-height: 50px;
-    
+    filter: drop-shadow(0px 0px 3px #5cff35); 
   }
 
   
 
   .mobile_menu_button {
     background-color: black;
-    border: none;
-    border-radius: 10px;
+    border: solid 2px white; 
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-left: none; 
     width: 100%;
     min-height: 50px;
+   
+    filter: drop-shadow(0px 0px 3px rgb(255, 255, 255));
   }
   .mobile_reset_button {
     width: 100%;
     color: #e629ff;
+    font-family: var(--font-pixel-sans);
+    text-transform: uppercase;
+    font-size: 1rem;
     border: solid 2px #e629ff;
-    border-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-left: none; 
     background-color: black;
     min-height: 50px;
+    filter: drop-shadow(0px 0px 3px #e629ff)
   }
 
   .mobile_clear_button {
     width: 100%;
-    color: white;
-    border: solid 2px white;
-    border-radius: 10px;
+    color: #4bd5ff;
+    font-family: var(--font-pixel-sans);
+    text-transform: uppercase;
+    font-size: 1rem;
+    border: solid 2px #4bd5ff;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-left: none; 
     background-color: black;
     min-height: 50px;
+    filter: drop-shadow(0px 0px 3px #4bd5ff)
   }
 
   .board_buttons {
